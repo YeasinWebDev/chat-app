@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "../globals.css";
 import Provider from "@components/Provider";
+import TopBar from "@components/TopBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,10 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/assets/logo.svg" type="image/x-icon" />
       </head>
       <body className={inter.className}>
-        <Provider>{children}</Provider>
+        <Provider>
+          <TopBar/>
+          {children}
+          </Provider>
       </body>
     </html>
   );
