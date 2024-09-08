@@ -89,7 +89,7 @@
 }
 
 .input-search {
-  @apply px-5 py-3 rounded-2xl bg-white outline-none;
+  @apply px-5 py-3 rounded-2xl bg-[#f2f2f2] outline-none;
 }
 
 .chats {
@@ -135,7 +135,7 @@
 }
 
 .input-group-name {
-  @apply bg-white rounded-2xl px-5 py-3 outline-none ;
+  @apply bg-[#f2f2f2] rounded-2xl px-5 py-3 outline-none ;
 }
 
 .selected-contact {
