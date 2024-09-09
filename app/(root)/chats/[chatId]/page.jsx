@@ -1,9 +1,9 @@
 import React from 'react'
 
-const ChatsDetails = () => {
+const ChatPage = () => {
   return (
-    <div>ChatsDetails</div>
+    <div>ChatPage</div>
   )
 }
 
-export default ChatsDetails
+export default ChatPage

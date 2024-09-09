@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Loader from './Loader'
 import { CheckCircle, RadioButtonUnchecked } from '@mui/icons-material'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 const ContactsInChat = () => {
     const [loading, setloading] = useState(true)
@@ -39,6 +40,14 @@ const ContactsInChat = () => {
     }
 
     const createChat = async () => {
+        if (selectedContacts.length === 0) {
+            toast.error('Please select at least one contact')
+            return
+        }
+        if (selectedContacts.length >1 && name.trim() === '') {
+            toast.error('Please enter a name for the Group chat')
+            return
+        }
         try {
             const res = await fetch('/api/chats', {
                 method: 'POST',
@@ -59,7 +68,7 @@ const ContactsInChat = () => {
             }
 
             if (res.error) {
-                alert('Failed to create chat')
+                toast.error('Failed to create chat')
             }
         } catch (error) {
             console.log(error)
@@ -100,6 +109,7 @@ const ContactsInChat = () => {
                                         className="input-group-name bg-[#f2f2f2]"
                                         value={name}
                                         onChange={(e) => setname(e.target.value)}
+                                        required
                                     />
                                 </div>
 
