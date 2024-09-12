@@ -42,7 +42,7 @@ const Profile = () => {
     <div className='profile-page'>
       <h1 className='text-heading3-bold'>Edit Your Profile</h1>
 
-      <form onSubmit={handleSubmit(UpdateUser)}>
+      <form onSubmit={handleSubmit(UpdateUser)} className='bg-[#f2f2f2] p-10 rounded-xl shadow-2xl'>
         <div className="input">
           <input
             {...register("username", {

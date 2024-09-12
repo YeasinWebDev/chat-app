@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { AddPhotoAlternate, Send } from '@mui/icons-material'
 import { CldUploadButton } from 'next-cloudinary'
 import MessageBox from './MessageBox'
+import { pusherClient } from '@lib/pusher'
 
 const ChatDetails = ({ chatId }) => {
   const { data: session } = useSession()
@@ -15,7 +16,7 @@ const ChatDetails = ({ chatId }) => {
   const [chat, setchat] = useState({})
   const [otherMembers, setOtherMembers] = useState([])
   const [text, settext] = useState('')
-  const chatContainerRef = useRef(null); 
+  const refdiv = useRef(null);
 
   const getChatDetails = async () => {
     try {
@@ -40,14 +41,16 @@ const ChatDetails = ({ chatId }) => {
     if (currentUser && chatId) {
       getChatDetails()
     }
-      
+
   }, [chatId, currentUser])
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    if (refdiv.current) {
+      refdiv.current?.scrollIntoView({
+        behavior: "smooth",
+      })
     }
-  }, [chat?.messages]); 
+  }, [chat?.messages]);
 
 
 
@@ -60,7 +63,7 @@ const ChatDetails = ({ chatId }) => {
         },
         body: JSON.stringify({ text, chatId, currentUserId: currentUser._id }),
       })
-      if(res.ok) settext("")
+      if (res.ok) settext("")
     } catch (error) {
       console.log(error)
     }
@@ -68,7 +71,7 @@ const ChatDetails = ({ chatId }) => {
 
   const sendPhoto = async (result) => {
     try {
-      const res = await fetch('/api/messages',{
+      const res = await fetch('/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +83,24 @@ const ChatDetails = ({ chatId }) => {
     }
   }
 
-  
+
+  useEffect(() => {
+    if (!chatId) return;
+    pusherClient.subscribe(chatId)
+
+    const handleMessage = (data) => {
+      setchat((prevState) => ({ ...prevState, messages: [...prevState.messages, data] }))
+    }
+
+    pusherClient.bind('new-message', handleMessage)
+
+    return () => {
+      pusherClient.unsubscribe(chatId)
+      pusherClient.unbind('new-message', handleMessage)
+    }
+  }, [chatId])
+
+
 
   return loading ? <Loader></Loader> : (
     <div className='chat-deatils'>
@@ -115,12 +135,13 @@ const ChatDetails = ({ chatId }) => {
         )}
       </div>
 
-      <div ref={chatContainerRef} className="chat-body">
+      <div  className="chat-body">
         {
-          chat?.messages?.map((message,index) =>(
-            <MessageBox key={index} message={message} currentUser={currentUser}/>
+          chat?.messages?.map((message, index) => (
+            <MessageBox key={index} message={message} currentUser={currentUser} />
           ))
         }
+        <div ref={refdiv}/>
       </div>
 
       <div className="send-massage">

@@ -8,7 +8,7 @@ const ChatBox = ({ chat, currentUser, currentChatId }) => {
     const otherMembers = chat?.members?.filter(e => e._id !== currentUser._id)
 
     const lastMessage = chat?.messages?.length > 0 && chat?.messages[chat?.messages.length - 1]
-    console.log(chat)
+    
     const seen = lastMessage?.seenBy?.find(member => member._id === currentUser._id)
 
     return (

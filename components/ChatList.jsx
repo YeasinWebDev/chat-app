@@ -2,6 +2,7 @@ import { useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 import Loader from './Loader'
 import ChatBox from './ChatBox'
+import { pusherClient } from '@lib/pusher'
 
 const ChatList = ({currentChatId}) => {
   const {data:session} = useSession()
@@ -27,6 +28,42 @@ const ChatList = ({currentChatId}) => {
       getChats()
     }
   },[session?.user,search])
+
+
+  useEffect(() => {
+    if (session?.user) {
+      
+      pusherClient.subscribe(session.user._id);
+
+      const handleChatUpdate = (updatedChat) => {
+        setChats((allChats) =>
+          allChats.map((chat) => {
+            if (chat._id === updatedChat.id) {
+              return { ...chat, messages: updatedChat.messages };
+            } else {
+              return chat;
+            }
+          })
+        );
+      };
+
+      const handleNewChat = (newchat) =>{
+        setChats((allChats) => [...allChats, newchat])
+      }
+
+      // Bind to the 'update-chat' event
+      pusherClient.bind('update-chat', handleChatUpdate);
+      pusherClient.bind('new-chat', handleNewChat);
+
+      // Cleanup function to unsubscribe and unbind the event
+      return () => {
+        pusherClient.unsubscribe(session.user._id);
+        pusherClient.unbind('update-chat', handleChatUpdate);
+        pusherClient.unbind('new-chat', handleNewChat);
+      };
+    }
+  }, [session?.user]);
+  
 
 
   return (

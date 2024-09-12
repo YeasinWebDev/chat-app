@@ -39,9 +39,6 @@ const TopBar = () => {
                 <Link href={'/chats'} className={`font-semibold ${pathname === '/chats' ? 'text-[#1d31e1] font-bold' : 'text-gray-800'}`}>
                     Chats
                 </Link>
-                <Link href={'/contacts'} className={`font-semibold ${pathname === '/contacts' ? 'text-[#1d31e1] font-bold' : 'text-gray-800'}`}>
-                    Contacts
-                </Link>
 
                 {/* Logout Icon */}
                 <Logout className='text-gray-800 cursor-pointer' onClick={handleLogOut} />

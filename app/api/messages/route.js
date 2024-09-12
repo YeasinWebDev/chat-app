@@ -1,3 +1,4 @@
+import { pusherSarver } from "@lib/pusher";
 import Chat from "@models/Chat";
 import Message from "@models/Message";
 import { User } from "@models/User";
@@ -37,6 +38,23 @@ export const POST = async (req) => {
           model: "User",
         })
         .exec();  
+
+        // trigger for new messages
+        await pusherSarver.trigger(chatId, 'new-message', newMessage)
+
+
+        const lastMessage = updatedChat.messages[updatedChat.messages.length - 1];
+
+          updatedChat.members.forEach(async (member) => {
+            try {
+              await pusherSarver.trigger(member._id.toString(), "update-chat", {
+                id: chatId,
+                messages: [lastMessage]
+              });
+            } catch (err) {
+              console.error(`Failed to trigger update-chat event`);
+            }
+          });
 
 
     return new Response(JSON.stringify(newMessage),{status:200})

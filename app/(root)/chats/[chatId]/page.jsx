@@ -30,7 +30,6 @@ const ChatPage = () => {
   useEffect(() =>{
     if(currentUser && chatId) {
       seenMessages()
-      console.log('hi')
     }
   },[chatId,currentUser])
 
